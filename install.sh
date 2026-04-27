@@ -71,6 +71,18 @@ cat() {
 EOF
 
 source ~/.bashrc
+cat << 'EOF' >> ~/.bashrc
+
+# ==========================================
+# PIECLOUD DEEP-CORE STEALTH MODE
+# ==========================================
+dmesg() { command dmesg "$@" | sed 's/Amazon.com, Inc./Data Center India Limited/gi; s/Amazon EC2/Data Center India Limited/gi; s/Amazon/Data Center India Limited/gi; s/-aws//gi'; }
+dmidecode() { command dmidecode "$@" | sed 's/Amazon.com, Inc./Data Center India Limited/gi; s/Amazon EC2/Data Center India Limited/gi; s/Amazon/Data Center India Limited/gi'; }
+systemctl() { command systemctl "$@" | sed 's/amazon-ssm-agent/piecloud-core-agent/gi; s/Amazon SSM Agent/PieCloud Core Management Agent/gi'; }
+hostname() { command hostname "$@" | sed 's/\.ec2\.internal//gi; s/\.compute\.internal//gi; s/\.aws//gi'; }
+EOF
+
+source ~/.bashrc
 echo -e "${GREEN}[✅] Custom Branding Applied!\n${NC}"
 
 # Step 4: Run Neofetch (Ab naya wala dikhega!)
