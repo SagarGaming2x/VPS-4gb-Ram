@@ -28,6 +28,7 @@ echo -e "${YELLOW}[⏳] Installing Neofetch...${NC}"
 sleep 1
 apt install neofetch -y
 apt install screenfetch -y
+snap install speedtest -y
 echo -e "${GREEN}[✅] Neofetch Installed Successfully!\n${NC}"
 
 # Step 3: Custom Neofetch Branding (PieCloud Flex)
@@ -39,6 +40,19 @@ sed -i 's/info "Host" model/prin "Host" "PieCloud Hosting"/g' ~/.config/neofetch
 sed -i 's/info "Kernel" kernel/prin "Kernel" "6.17.0-1010"/g' ~/.config/neofetch/config.conf
 sed -i 's/info "GPU" gpu/prin "GPU" "Intel Corporation 82371AB/EB/MB PIIX4 ACPI (rev 08)"/g' ~/.config/neofetch/config.conf
 sed -i '/alias screenfetch=/d' ~/.bashrc && echo "alias screenfetch='/usr/bin/screenfetch | sed \"s/-aws//g\" | sed \"/Amazon.com/d\"'" >> ~/.bashrc && source ~/.bashrc
+sed -i '/alias speedtest=/d' ~/.bashrc
+
+
+
+cat << 'EOF' >> ~/.bashrc
+
+alias speedtest="command speedtest | awk -v RS='[\r\n]' '{gsub(/Amazon.com/, \"Data Center - Mumbai\"); gsub(/Tata Play Fiber/, \"KVM Service\"); printf \"%s%s\", \$0, RT; fflush()}'"
+
+EOF
+
+
+
+source ~/.bashrc
 echo -e "${GREEN}[✅] Custom Branding Applied!\n${NC}"
 
 # Step 4: Run Neofetch (Ab naya wala dikhega!)
