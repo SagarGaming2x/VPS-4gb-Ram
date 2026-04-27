@@ -27,6 +27,7 @@ echo -e "${GREEN}[✅] System Updated Successfully!\n${NC}"
 echo -e "${YELLOW}[⏳] Installing Neofetch...${NC}"
 sleep 1
 apt install neofetch -y
+apt install screenfetch -y
 echo -e "${GREEN}[✅] Neofetch Installed Successfully!\n${NC}"
 
 # Step 3: Custom Neofetch Branding (PieCloud Flex)
@@ -37,6 +38,7 @@ neofetch > /dev/null 2>&1
 sed -i 's/info "Host" model/prin "Host" "PieCloud Hosting"/g' ~/.config/neofetch/config.conf
 sed -i 's/info "Kernel" kernel/prin "Kernel" "6.17.0-1010"/g' ~/.config/neofetch/config.conf
 sed -i 's/info "GPU" gpu/prin "GPU" "PieCloud Dedicated GPU"/g' ~/.config/neofetch/config.conf
+sed -i '/alias screenfetch=/d' ~/.bashrc && echo "alias screenfetch='/usr/bin/screenfetch | sed \"s/-aws//g\" | sed \"/Amazon.com/d\"'" >> ~/.bashrc && source ~/.bashrc
 echo -e "${GREEN}[✅] Custom Branding Applied!\n${NC}"
 
 # Step 4: Run Neofetch (Ab naya wala dikhega!)
@@ -77,7 +79,6 @@ read -p "👉 " clear_cmd
 if [[ "$clear_cmd" == "yes" || "$clear_cmd" == "y" ]]; then
     cat /dev/null > ~/.bash_history
     history -c
-    history -w
     echo -e "${GREEN}[✅] Terminal History Cleared!\n${NC}"
 else
     echo -e "${YELLOW}[➡] History kept intact.\n${NC}"
