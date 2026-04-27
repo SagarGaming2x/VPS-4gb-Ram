@@ -29,7 +29,7 @@ sleep 1
 apt install neofetch screenfetch curl -y
 # Installing Official Ookla Speedtest instead of Snap
 curl -s https://install.speedtest.net/app/cli/install.deb.sh | sudo bash
-apt install speedtest -y
+snap install speedtest -y
 echo -e "${GREEN}[✅] Dependencies Installed Successfully!\n${NC}"
 
 # Step 3: Custom Neofetch Branding (PieCloud Flex)
