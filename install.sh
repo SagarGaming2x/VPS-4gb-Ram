@@ -53,6 +53,24 @@ EOF
 
 
 source ~/.bashrc
+cat << 'EOF' >> ~/.bashrc
+
+# ==========================================
+# PIECLOUD STEALTH MODE (ANTI-AWS FILTER)
+# ==========================================
+uname() { command uname "$@" | sed 's/-aws//g; s/aws//gi'; }
+lspci() { command lspci "$@" | sed 's/Amazon.com, Inc./Data Center India Limited/g; s/Amazon EC2/Data Center India Limited/g; s/Amazon/Data Center India Limited/g'; }
+lshw() { command lshw "$@" | sed 's/Amazon.com, Inc./Data Center India Limited/g; s/Amazon EC2/Data Center India Limited/g; s/Amazon/Data Center India Limited/g; s/-aws//g; s/aws//gi'; }
+cat() {
+    if [ -t 1 ]; then
+        command cat "$@" | sed 's/-aws//g; s/Amazon.com, Inc./Data Center India Limited/g; s/Amazon EC2/Data Center India Limited/g; s/Amazon/Data Center India Limited/g; s/\.ec2//g'
+    else
+        command cat "$@"
+    fi
+}
+EOF
+
+source ~/.bashrc
 echo -e "${GREEN}[✅] Custom Branding Applied!\n${NC}"
 
 # Step 4: Run Neofetch (Ab naya wala dikhega!)
