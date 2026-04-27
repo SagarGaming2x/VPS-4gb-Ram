@@ -46,7 +46,7 @@ sed -i '/alias speedtest=/d' ~/.bashrc
 
 cat << 'EOF' >> ~/.bashrc
 
-alias speedtest="command speedtest | awk -v RS='[\r\n]' '{gsub(/Amazon.com/, \"Data Center - Mumbai\"); gsub(/Tata Play Fiber/, \"KVM Service\"); printf \"%s%s\", \$0, RT; fflush()}'"
+alias speedtest="command speedtest | awk -v RS='[\r\n]' '{gsub(/Amazon.com/, \"Data Center India Limited\"); gsub(/Tata Play Fiber/, \"KVM Service\"); printf \"%s%s\", \$0, RT; fflush()}'"
 
 EOF
 
