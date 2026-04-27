@@ -23,41 +23,32 @@ sleep 1
 apt update -y && apt upgrade -y
 echo -e "${GREEN}[✅] System Updated Successfully!\n${NC}"
 
-# Step 2: Install Neofetch
-echo -e "${YELLOW}[⏳] Installing Neofetch...${NC}"
+# Step 2: Install Dependencies
+echo -e "${YELLOW}[⏳] Installing Neofetch, Screenfetch & Official Speedtest...${NC}"
 sleep 1
-apt install neofetch -y
-apt install screenfetch -y
-snap install speedtest -y
-echo -e "${GREEN}[✅] Neofetch Installed Successfully!\n${NC}"
+apt install neofetch screenfetch curl -y
+# Installing Official Ookla Speedtest instead of Snap
+curl -s https://install.speedtest.net/app/cli/install.deb.sh | sudo bash
+apt install speedtest -y
+echo -e "${GREEN}[✅] Dependencies Installed Successfully!\n${NC}"
 
 # Step 3: Custom Neofetch Branding (PieCloud Flex)
-echo -e "${YELLOW}[⏳] Applying PieCloud Custom Branding...${NC}"
+echo -e "${YELLOW}[⏳] Applying PieCloud Custom Branding & Stealth Mode...${NC}"
 # Generate config file silently first
 neofetch > /dev/null 2>&1
 # Replace hardware info with Custom PieCloud Info
 sed -i 's/info "Host" model/prin "Host" "PieCloud Hosting"/g' ~/.config/neofetch/config.conf
 sed -i 's/info "Kernel" kernel/prin "Kernel" "6.17.0-1010"/g' ~/.config/neofetch/config.conf
 sed -i 's/info "GPU" gpu/prin "GPU" "Intel Corporation 82371AB/EB/MB PIIX4 ACPI (rev 08)"/g' ~/.config/neofetch/config.conf
-sed -i '/alias screenfetch=/d' ~/.bashrc && echo "alias screenfetch='/usr/bin/screenfetch | sed \"s/-aws//g\" | sed \"/Amazon.com/d\"'" >> ~/.bashrc && source ~/.bashrc
-sed -i '/alias speedtest=/d' ~/.bashrc
 
-
-
-cat << 'EOF' >> ~/.bashrc
-
+# Create a clean dedicated stealth file to prevent .bashrc duplicates
+cat << 'EOF' > ~/.piecloud_stealth.sh
+# ==========================================
+# PIECLOUD ALIASES & STEALTH FILTERS
+# ==========================================
+alias screenfetch='/usr/bin/screenfetch | sed "s/-aws//g" | sed "/Amazon.com/d"'
 alias speedtest="command speedtest | awk -v RS='[\r\n]' '{gsub(/Amazon.com/, \"Data Center India Limited\"); gsub(/Tata Play Fiber/, \"KVM Service\"); printf \"%s%s\", \$0, RT; fflush()}'"
 
-EOF
-
-
-
-source ~/.bashrc
-cat << 'EOF' >> ~/.bashrc
-
-# ==========================================
-# PIECLOUD STEALTH MODE (ANTI-AWS FILTER)
-# ==========================================
 uname() { command uname "$@" | sed 's/-aws//g; s/aws//gi'; }
 lspci() { command lspci "$@" | sed 's/Amazon.com, Inc./Data Center India Limited/g; s/Amazon EC2/Data Center India Limited/g; s/Amazon/Data Center India Limited/g'; }
 lshw() { command lshw "$@" | sed 's/Amazon.com, Inc./Data Center India Limited/g; s/Amazon EC2/Data Center India Limited/g; s/Amazon/Data Center India Limited/g; s/-aws//g; s/aws//gi'; }
@@ -68,24 +59,20 @@ cat() {
         command cat "$@"
     fi
 }
-EOF
-
-source ~/.bashrc
-cat << 'EOF' >> ~/.bashrc
-
-# ==========================================
-# PIECLOUD DEEP-CORE STEALTH MODE
-# ==========================================
 dmesg() { command dmesg "$@" | sed 's/Amazon.com, Inc./Data Center India Limited/gi; s/Amazon EC2/Data Center India Limited/gi; s/Amazon/Data Center India Limited/gi; s/-aws//gi'; }
 dmidecode() { command dmidecode "$@" | sed 's/Amazon.com, Inc./Data Center India Limited/gi; s/Amazon EC2/Data Center India Limited/gi; s/Amazon/Data Center India Limited/gi'; }
 systemctl() { command systemctl "$@" | sed 's/amazon-ssm-agent/piecloud-core-agent/gi; s/Amazon SSM Agent/PieCloud Core Management Agent/gi'; }
 hostname() { command hostname "$@" | sed 's/\.ec2\.internal//gi; s/\.compute\.internal//gi; s/\.aws//gi'; }
 EOF
 
-source ~/.bashrc
-echo -e "${GREEN}[✅] Custom Branding Applied!\n${NC}"
+# Link the stealth file to .bashrc only if it doesn't exist
+if ! grep -q "source ~/.piecloud_stealth.sh" ~/.bashrc; then
+    echo -e "\n# PieCloud Stealth Logic\nsource ~/.piecloud_stealth.sh" >> ~/.bashrc
+fi
 
-# Step 4: Run Neofetch (Ab naya wala dikhega!)
+echo -e "${GREEN}[✅] Custom Branding & Stealth Mode Applied!\n${NC}"
+
+# Step 4: Run Neofetch
 echo -e "${CYAN}👇 System Information 👇${NC}"
 neofetch
 echo -e "\n"
@@ -122,15 +109,19 @@ read -p "👉 " clear_cmd
 
 if [[ "$clear_cmd" == "yes" || "$clear_cmd" == "y" ]]; then
     cat /dev/null > ~/.bash_history
-    history -c
+    history -cw
     echo -e "${GREEN}[✅] Terminal History Cleared!\n${NC}"
 else
     echo -e "${YELLOW}[➡] History kept intact.\n${NC}"
 fi
 
-# Step 10: Final Thank You Message
+# Step 10: Final Thank You Message & Reload Shell
 echo -e "${PURPLE}======================================================${NC}"
 echo -e "${GREEN}      🎉 SETUP COMPLETE! THANK YOU FOR CHOOSING 🎉    ${NC}"
 echo -e "${CYAN}                    PIECLOUD!                         ${NC}"
 echo -e "${PURPLE}======================================================${NC}"
-echo -e "${YELLOW}💡 Note: Type 'bash' and hit Enter to see your new hostname '$NEW_HOSTNAME' on screen!${NC}\n"
+echo -e "${YELLOW}💡 Automatically reloading terminal to apply all changes...${NC}\n"
+sleep 2
+
+# This will auto-reload the terminal with new hostname and settings!
+exec bash
