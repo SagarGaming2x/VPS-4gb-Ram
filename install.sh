@@ -46,7 +46,8 @@ cat << 'EOF' > ~/.piecloud_stealth.sh
 # PIECLOUD ALIASES & STEALTH FILTERS
 # ==========================================
 alias screenfetch='/usr/bin/screenfetch | sed "s/-aws//g" | sed "/Amazon.com/d"'
-alias speedtest="command speedtest | awk -v RS='[\r\n]' '{gsub(/Amazon.com/, \"Data Center India Limited\"); gsub(/Tata Play Fiber/, \"KVM Service\"); printf \"%s%s\", \$0, RT; fflush()}'"
+# Added --accept-license and --accept-gdpr to automatically bypass Ookla EULA prompts
+alias speedtest="command speedtest --accept-license --accept-gdpr | awk -v RS='[\r\n]' '{gsub(/Amazon.com/, \"Data Center India Limited\"); gsub(/Tata Play Fiber/, \"KVM Service\"); printf \"%s%s\", \$0, RT; fflush()}'"
 
 uname() { command uname "$@" | sed 's/-aws//g; s/aws//gi'; }
 lspci() { command lspci "$@" | sed 's/Amazon.com, Inc./Data Center India Limited/g; s/Amazon EC2/Data Center India Limited/g; s/Amazon/Data Center India Limited/g'; }
