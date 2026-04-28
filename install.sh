@@ -23,10 +23,14 @@ sleep 1
 apt update -y && apt upgrade -y
 echo -e "${GREEN}[✅] System Updated Successfully!\n${NC}"
 
-# Step 2: Install Dependencies
+# Step 2: Install Dependencies (FIXED NEOFETCH FOR UBUNTU 24.04)
 echo -e "${YELLOW}[⏳] Installing Neofetch, Screenfetch & Speedtest...${NC}"
 sleep 1
-apt install neofetch screenfetch curl -y
+apt install screenfetch curl wget -y
+# Neofetch is removed from Ubuntu 24.04 apt repos, so we install it manually from GitHub
+wget -qO /usr/bin/neofetch https://raw.githubusercontent.com/dylanaraps/neofetch/master/neofetch
+chmod +x /usr/bin/neofetch
+
 # Properly installing speedtest via snap (No -y flag)
 snap install speedtest
 echo -e "${GREEN}[✅] Dependencies Installed Successfully!\n${NC}"
